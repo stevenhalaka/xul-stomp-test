@@ -8,13 +8,17 @@
   <script type="application/javascript" src="chrome://myapp/content/stilts-stomp.js"/>
 	<script type="application/javascript">
 client = Stomp.client( "ws://localhost:15674/stomp/websocket" );
+var msgs = 0;
 client.connect( "guest", "guest", function(frame) {
   subscription_id = client.subscribe("/queue/one", function(msg) {
-		document.getElementById('msgs').textContent += "\r\n" + msg;
+    msgs++;
+    document.getElementById('msgs').textContent = "Consumed " + msgs + " messages";
   } );
 } );
 function produce() {
-  client.send("/queue/one", {}, "test message");
+  for (var i=0; i&lt;2000; i++) {
+    client.send("/queue/one", {}, "test message");
+  }
 }
 	</script>
 
