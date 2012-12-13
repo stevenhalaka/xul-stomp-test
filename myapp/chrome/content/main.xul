@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<window id="main" title="My App" width="600" height="500" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/javascript" src="chrome://myapp/content/main.js"/>
+  <script type="application/javascript" src="chrome://myapp/content/stilts-stomp.js"/>
+	<script type="application/javascript">
+client = Stomp.client( "ws://localhost:15674/stomp/websocket" );
+client.connect( "guest", "guest", function(frame) {
+  subscription_id = client.subscribe("/queue/one", function(msg) {
+		document.getElementById('msgs').textContent += "\r\n" + msg;
+  } );
+} );
+function produce() {
+  client.send("/queue/one", {}, "test message");
+}
+	</script>
+
+  <caption label="Hello World"/>
+  <separator/>
+  <button label="Send Message >>" oncommand="produce();"/>
+  <button label="Disconnect >>" oncommand="client.disconnect();"/>
+  <separator/>
+  <description id="msgs" hidden="false" />
+
+</window>
